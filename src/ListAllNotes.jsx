@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 import myImage from "./me.png";
-import { Link } from "react-router-dom";
-
-function App() {
-  const [myMessage, setMyMessage] = useState(
-    localStorage.getItem("myData") || "반갑습니다!"
+function ListAllNotes() {
+  const [text, setText] = useState("");
+  const [myList, setMyList] = useState(
+    JSON.parse(localStorage.getItem("myList")) || []
   );
-  useEffect(() => localStorage.setItem("myData", myMessage), [myMessage]);
+  useEffect(
+    () => localStorage.setItem("myList", JSON.stringify(myList)),
+    [myList]
+  );
 
   return (
     <div className="App">
@@ -34,16 +36,27 @@ function App() {
             style={{
               width: "100%",
             }}
-            value={myMessage}
-            onChange={(e) => setMyMessage(e.target.value)}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              setMyList((prev) => [...prev, text]);
+              setText("");
+            }}
+          >
+            추가
+          </button>
         </div>
-        <Link to="/list" style={{ color: "white" }}>
-          다중 목록 보기
-        </Link>
+        <div>
+          {myList.map((item, idx) => (
+            <div key={item + "_" + idx}>{item} </div>
+          ))}
+        </div>
       </header>
     </div>
   );
 }
 
-export default App;
+export default ListAllNotes;
